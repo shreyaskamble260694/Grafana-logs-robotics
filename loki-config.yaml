@@ -22,9 +22,6 @@ schema_config:
 # Limits and other configurations
 limits_config:
   # Limiting the maximum number of entries per push request
-  max_entries_per_push: 5000  # Correct field for controlling max entries per push
+  max_entries_per_push: 5000 
 
-# Optionally you can add other fields like:
-# - `max_line_size` (to control the maximum size of a single log line)
-# - `max_streams_per_query` (to control the maximum number of streams that can be queried)
 
