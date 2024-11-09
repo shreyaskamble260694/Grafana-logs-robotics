@@ -1,29 +1,37 @@
-version: '3'
+version: '3.8'
+
 services:
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    networks:
+      - logging
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - loki
+
   loki:
     image: grafana/loki:2.7.0
-    container_name: loki
     ports:
-      - "3100:3100"  # Loki port for querying
+      - "3100:3100"
     volumes:
-      - ./loki-config.yaml:/etc/loki/local-config.yaml  # Configuration file
+      - ./loki-config.yaml:/etc/loki/config.yaml
+      - ./loki-data:/data/loki  # Make sure to mount the data directory properly
+    networks:
+      - logging
 
   promtail:
     image: grafana/promtail:2.7.0
-    container_name: promtail
     volumes:
-      - /var/log:/var/log  # Mount logs directory from EC2 instance
-      - ./promtail-config.yaml:/etc/promtail/promtail.yaml  # Configuration file
+      - ./promtail-config.yaml:/etc/promtail/config.yaml
+    networks:
+      - logging
     depends_on:
       - loki
 
-  grafana:
-    image: grafana/grafana:latest  # Changed to latest version
-    container_name: grafana
-    ports:
-      - "3000:3000"  # Grafana port
-    environment:
-      GF_SECURITY_ADMIN_PASSWORD: 'admin'
-    depends_on:
-      - loki
+networks:
+  logging:
+    driver: bridge
 
