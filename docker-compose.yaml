@@ -1,0 +1,29 @@
+version: '3'
+services:
+  loki:
+    image: grafana/loki:2.7.0
+    container_name: loki
+    ports:
+      - "3100:3100"  # Loki port for querying
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml  # Configuration file
+
+  promtail:
+    image: grafana/promtail:2.7.0
+    container_name: promtail
+    volumes:
+      - /var/log:/var/log  # Mount logs directory from EC2 instance
+      - ./promtail-config.yaml:/etc/promtail/promtail.yaml  # Configuration file
+    depends_on:
+      - loki
+
+  grafana:
+    image: grafana/grafana:9.6.0
+    container_name: grafana
+    ports:
+      - "3000:3000"  # Grafana port
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: 'admin'
+    depends_on:
+      - loki
+
