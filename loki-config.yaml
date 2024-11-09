@@ -1,0 +1,27 @@
+auth_enabled: false
+
+server:
+  http_listen_port: 3100
+
+# Configuring Loki to store logs locally
+storage_config:
+  boltdb_shipper:
+    active_index_directory: /data/loki/index
+    cache_location: /data/loki/cache
+  filesystem:
+    directory: /data/loki/chunks
+
+schema_config:
+  configs:
+    - from: 2020-10-01
+      store: boltdb_shipper
+      object_store: filesystem
+      schema: v11
+      index:
+        prefix: index_
+        period: 168h
+
+# Limits and other configurations
+limits_config:
+  max_entries_limit: 500
+
