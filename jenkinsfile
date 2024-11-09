@@ -1,0 +1,28 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER_HUB_USERNAME = credentials('docker-hub-creds') // Reference to Docker Hub credentials
+        EC2_IP = 'your-ec2-ip-address' // Alternatively, use the secret if added
+        EC2_SSH_KEY = credentials('ec2-ssh-key') // Reference to EC2 SSH key credentials
+    }
+    stages {
+        stage('Login to Docker Hub') {
+            steps {
+                script {
+                    // Docker login using credentials
+                    sh "echo \$DOCKER_HUB_PASSWORD | docker login -u \$DOCKER_HUB_USERNAME --password-stdin"
+                }
+            }
+        }
+        stage('Deploy to EC2') {
+            steps {
+                script {
+                    // Deploy to EC2 using SSH and your PEM file
+                    sh """
+                    ssh -i \$EC2_SSH_KEY ec2-user@\$EC2_IP 'docker pull your-image && docker run your-container'
+                    """
+                }
+            }
+        }
+    }
+}
