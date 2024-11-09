@@ -1,0 +1,13 @@
+             **System architecture block diagram**
+
++------------------+        +---------------------+         +--------------------+
+| Log Source       | ---->  |   Promtail (Log     |  ---->  |      Loki          |
+| (Robot Events,   |        |   Collector)        |         | (Log Aggregator &  |
+|  API Gateway)    |        |   (with transformations)      |   (Log Storage & Querying)|
++------------------+        +---------------------+         +--------------------+
+                                                              |
+                                                              v
+                                                   +--------------------+
+                                                   |   Grafana          |
+                                                   | (Log Visualization)|
+                                                   +--------------------+
